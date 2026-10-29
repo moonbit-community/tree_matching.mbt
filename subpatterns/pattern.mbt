@@ -28,7 +28,7 @@ priv enum PatternKind {
 /// capture map. Top-level wildcards are valid complete patterns and therefore
 /// match every node in the subject tree.
 pub fn Pattern::wildcard() -> Pattern {
-  { kind: Wildcard }
+  { kind: Wildcard, }
 }
 
 ///|
@@ -39,7 +39,7 @@ pub fn Pattern::wildcard() -> Pattern {
 /// deliberately treated as independent wildcards; all locations are appended in
 /// pattern preorder, and no structural equality constraint is enforced.
 pub fn Pattern::capture(name : String) -> Pattern {
-  { kind: Capture(name) }
+  { kind: Capture(name), }
 }
 
 ///|
@@ -50,5 +50,5 @@ pub fn Pattern::capture(name : String) -> Pattern {
 /// from the view so later caller-side array mutation cannot change a compiled
 /// or pending pattern.
 pub fn Pattern::node(label : String, children : ArrayView[Pattern]) -> Pattern {
-  { kind: Node(label, children.to_owned()) }
+  { kind: Node(label, children.to_owned()), }
 }

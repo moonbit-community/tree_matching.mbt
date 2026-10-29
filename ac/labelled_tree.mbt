@@ -2,7 +2,7 @@
 struct LabelledTree[Loc] {
   node : LabelledTreeNode[Loc]
   loc : Loc?
-  mut hits : Int
+  mut hits : Int32
 }
 
 ///|
@@ -42,16 +42,16 @@ pub fn[Loc] LabelledTree::node(
   label : String,
   children : ArrayView[LabelledTree[Loc]],
 ) -> LabelledTree[Loc] {
-  LabelledTree::{ node: Node(label~, children~), loc: Some(loc), hits: 0 }
+  LabelledTree::{ node: Node(label~, children~), loc: Some(loc), hits: 0, }
 }
 
 ///|
 pub fn[Loc] LabelledTree::metavar(name : String) -> LabelledTree[Loc] {
-  LabelledTree::{ node: MetaVar(name), loc: None, hits: 0 }
+  LabelledTree::{ node: MetaVar(name), loc: None, hits: 0, }
 }
 
 ///|
-fn[Loc] LabelledTree::arity(self : LabelledTree[Loc]) -> Int {
+fn[Loc] LabelledTree::arity(self : LabelledTree[Loc]) -> Int32 {
   match self.node {
     Node(children~, ..) => children.length()
     MetaVar(_) => 0
@@ -61,7 +61,7 @@ fn[Loc] LabelledTree::arity(self : LabelledTree[Loc]) -> Int {
 ///|
 fn[Loc] LabelledTree::child(
   self : LabelledTree[Loc],
-  index : Int,
+  index : Int32,
 ) -> LabelledTree[Loc] {
   match self.node {
     Node(children~, ..) => children[index]

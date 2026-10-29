@@ -6,7 +6,7 @@
 /// `"a1" + "0"` and mirrors the paper's ranked alphabet.
 priv struct NodeSymbol {
   label : String
-  arity : Int
+  arity : Int32
 } derive(Eq, Hash)
 
 ///|
@@ -16,7 +16,7 @@ priv struct NodeSymbol {
 /// assigned from structural keys too, this key represents the whole subtree.
 priv struct SubpatternKey {
   label : String
-  children : Array[Int]
+  children : Array[Int32]
 } derive(Eq, Hash)
 
 ///|
@@ -26,7 +26,7 @@ priv struct SubpatternKey {
 /// is stored at index `id - 1` in `CompileState::subpatterns`.
 priv struct Subpattern {
   symbol : NodeSymbol
-  children : Array[Int]
+  children : Array[Int32]
 }
 
 ///|
@@ -36,7 +36,7 @@ priv struct Subpattern {
 /// path against the matched subject node to recover the captured location.
 priv struct CapturePath {
   name : String
-  path : Array[Int]
+  path : Array[Int32]
 }
 
 ///|
@@ -45,14 +45,14 @@ priv struct CapturePath {
 /// `pos` identifies `i`; `bits` is a copy of the child match set. The copy is
 /// required because `Bitset` is mutable and map keys must remain stable.
 priv struct FatherMemoKey {
-  pos : Int
+  pos : Int32
   bits : Array[UInt64]
 } derive(Eq, Hash)
 
 ///|
 /// Mutable state used only while compiling one matcher.
 priv struct CompileState {
-  key_to_id : Map[SubpatternKey, Int]
+  key_to_id : Map[SubpatternKey, Int32]
   subpatterns : Array[Subpattern]
 }
 
@@ -79,15 +79,15 @@ priv struct MatchState[Loc] {
 /// forest.
 struct Matcher {
   // Number of UInt64 words in every bitset.
-  word_count : Int
+  word_count : Int32
   // U_by_symbol[s] contains all subpattern roots with symbol s, plus v.
   u_by_symbol : Map[NodeSymbol, Bitset]
   // father_by_pos_child[i][child_id] contains every parent subpattern whose
   // i-th child is child_id. Unions over a child match set compute Father_i(M).
-  father_by_pos_child : Array[Map[Int, Bitset]]
+  father_by_pos_child : Array[Map[Int32, Bitset]]
   // complete_patterns_by_root_id[root_id] gives all user pattern indexes whose
   // compiled root is root_id. Multiple top-level wildcards/captures share id 0.
-  complete_patterns_by_root_id : Array[Array[Int]]
+  complete_patterns_by_root_id : Array[Array[Int32]]
   // Capture paths are kept per user pattern, not per deduplicated subtree,
   // because two patterns can share structure but use different capture names.
   capture_paths_by_pattern : Array[Array[CapturePath]]
@@ -105,7 +105,7 @@ struct Matcher {
 ///
 /// Empty pattern lists are valid and produce a matcher that returns no matches.
 pub fn Matcher::compile(patterns : ArrayView[Pattern]) -> Matcher {
-  let state = CompileState::{ key_to_id: Map::default(), subpatterns: [] }
+  let state = CompileState::{ key_to_id: Map::default(), subpatterns: [], }
   let root_ids = []
   let capture_paths_by_pattern = []
   for pattern in patterns {
@@ -157,19 +157,19 @@ pub fn Matcher::compile(patterns : ArrayView[Pattern]) -> Matcher {
 ///
 /// Wildcards and captures both return id `0`. Only labelled nodes are
 /// deduplicated and assigned positive ids.
-fn CompileState::register(self : CompileState, pattern : Pattern) -> Int {
+fn CompileState::register(self : CompileState, pattern : Pattern) -> Int32 {
   match pattern.kind {
     Wildcard | Capture(_) => 0
     Node(label, children) => {
       let child_ids = children.map(child => self.register(child))
-      let key = SubpatternKey::{ label, children: child_ids.copy() }
+      let key = SubpatternKey::{ label, children: child_ids.copy(), }
       match self.key_to_id.get(key) {
         Some(id) => id
         None => {
           let id = self.subpatterns.length() + 1
           self.key_to_id[key] = id
           self.subpatterns.push({
-            symbol: { label, arity: child_ids.length() },
+            symbol: { label, arity: child_ids.length(), },
             children: child_ids,
           })
           id
@@ -186,12 +186,12 @@ fn CompileState::register(self : CompileState, pattern : Pattern) -> Int {
 /// visible even when the structural matcher treats them as plain `v`.
 fn collect_capture_paths(
   pattern : Pattern,
-  path : Array[Int],
+  path : Array[Int32],
   out : Array[CapturePath],
 ) -> Unit {
   match pattern.kind {
     Wildcard => ()
-    Capture(name) => out.push({ name, path: path.copy() })
+    Capture(name) => out.push({ name, path: path.copy(), })
     Node(_, children) =>
       children.eachi((pos, child) => {
         let child_path = path.copy()
@@ -245,7 +245,7 @@ fn[Loc] Matcher::match_subject(
   for child_state in child_states {
     matches.append(child_state.matches)
   }
-  { bits, matches }
+  { bits, matches, }
 }
 
 ///|
@@ -253,8 +253,8 @@ fn[Loc] Matcher::match_subject(
 ///
 /// Unknown symbols still receive `{v}` so wildcard and capture patterns match
 /// them, but no complete labelled pattern can be reported.
-fn Matcher::u_for(self : Matcher, label : String, arity : Int) -> Bitset {
-  let symbol = NodeSymbol::{ label, arity }
+fn Matcher::u_for(self : Matcher, label : String, arity : Int32) -> Bitset {
+  let symbol = NodeSymbol::{ label, arity, }
   match self.u_by_symbol.get(symbol) {
     Some(bits) => bits
     None => {
@@ -274,11 +274,11 @@ fn Matcher::u_for(self : Matcher, label : String, arity : Int) -> Bitset {
 /// cached because many subject nodes often have identical child match sets.
 fn Matcher::father_for(
   self : Matcher,
-  pos : Int,
+  pos : Int32,
   child_bits : Bitset,
   father_cache : Map[FatherMemoKey, Bitset],
 ) -> Bitset {
-  let key = FatherMemoKey::{ pos, bits: child_bits.words.copy() }
+  let key = FatherMemoKey::{ pos, bits: child_bits.words.copy(), }
   match father_cache.get(key) {
     Some(bits) => bits
     None => {
@@ -326,7 +326,7 @@ fn[Loc] Matcher::push_matches_at(
 fn[Loc] Matcher::collect_captures(
   self : Matcher,
   subject : SubjectTree[Loc],
-  pattern_index : Int,
+  pattern_index : Int32,
 ) -> Map[String, Array[Loc]] {
   let captures = Map::default()
   for capture_path in self.capture_paths_by_pattern[pattern_index] {
@@ -344,7 +344,7 @@ fn[Loc] Matcher::collect_captures(
 /// subject children are guaranteed to exist.
 fn[Loc] SubjectTree::loc_at_path(
   self : SubjectTree[Loc],
-  path : Array[Int],
+  path : Array[Int32],
 ) -> Loc {
   let mut current = self
   for pos in path {

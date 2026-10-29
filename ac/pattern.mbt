@@ -1,7 +1,7 @@
 ///|
 enum Symbol {
   Label(String)
-  Child(Int)
+  Child(Int32)
 } derive(Eq, Hash, Debug)
 
 ///|

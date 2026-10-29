@@ -29,7 +29,6 @@ jobs:
           git submodule init
           git submodule update
           moon update
-          moon install
 
       - name: moon check
         run: moon check
