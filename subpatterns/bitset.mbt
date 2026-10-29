@@ -12,25 +12,25 @@ priv struct Bitset {
 
 ///|
 /// Return the number of 64-bit words needed to store `bit_count` bits.
-fn bitset_word_count(bit_count : Int) -> Int {
+fn bitset_word_count(bit_count : Int32) -> Int32 {
   (bit_count + 63) / 64
 }
 
 ///|
 /// Allocate an all-zero bitset.
-fn Bitset::new(word_count : Int) -> Bitset {
-  { words: Array::make(word_count, 0UL) }
+fn Bitset::new(word_count : Int32) -> Bitset {
+  { words: Array::make(word_count, 0UL), }
 }
 
 ///|
 /// Copy the backing words before destructive set operations.
 fn Bitset::copy(self : Bitset) -> Bitset {
-  { words: self.words.copy() }
+  { words: self.words.copy(), }
 }
 
 ///|
 /// Set a bit in place.
-fn Bitset::set(self : Bitset, bit : Int) -> Unit {
+fn Bitset::set(self : Bitset, bit : Int32) -> Unit {
   let word_index = bit / 64
   let offset = bit % 64
   self.words[word_index] = self.words[word_index] | (1UL << offset)
@@ -60,7 +60,7 @@ fn Bitset::intersect_in_place(self : Bitset, other : Bitset) -> Unit {
 /// proportional to the number of set bits.
 fn Bitset::each_set_bit(
   self : Bitset,
-  handle : (Int) -> Unit raise?,
+  handle : (Int32) -> Unit raise?,
 ) -> Unit raise? {
   for word_index in 0..<self.words.length() {
     let mut word = self.words[word_index]

@@ -86,7 +86,7 @@ priv struct Trie[T] {
 ///|
 /// Create an empty trie
 fn[T : Hash + Eq] Trie::new() -> Trie[T] {
-  Trie::{ root: TrieNode::new(None) }
+  Trie::{ root: TrieNode::new(None), }
 }
 
 ///|

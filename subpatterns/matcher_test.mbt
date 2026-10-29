@@ -1,16 +1,16 @@
 ///|
 /// Shorthand for leaf subjects used throughout the behavior tests.
-fn leaf(loc : Int, label : String) -> @subpatterns.SubjectTree[Int] {
+fn leaf(loc : Int32, label : String) -> @subpatterns.SubjectTree[Int32] {
   @subpatterns.SubjectTree::node(loc, label, [])
 }
 
 ///|
 /// Shorthand for non-leaf subjects.
 fn node(
-  loc : Int,
+  loc : Int32,
   label : String,
-  children : ArrayView[@subpatterns.SubjectTree[Int]],
-) -> @subpatterns.SubjectTree[Int] {
+  children : ArrayView[@subpatterns.SubjectTree[Int32]],
+) -> @subpatterns.SubjectTree[Int32] {
   @subpatterns.SubjectTree::node(loc, label, children)
 }
 
@@ -37,7 +37,9 @@ fn capture(name : String) -> @subpatterns.Pattern {
 
 ///|
 /// Reduce matches to the fields relevant for ordering assertions.
-fn pair_locs(matches : Array[@subpatterns.Match[Int]]) -> Array[(Int, Int)] {
+fn pair_locs(
+  matches : Array[@subpatterns.Match[Int32]],
+) -> Array[(Int32, Int32)] {
   matches.map(m => (m.pattern_index, m.loc))
 }
 

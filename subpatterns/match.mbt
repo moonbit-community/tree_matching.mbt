@@ -6,7 +6,7 @@
 /// complete pattern matched. `captures` maps each capture name to every subject
 /// location collected for that name in the matched pattern occurrence.
 pub(all) struct Match[Loc] {
-  pattern_index : Int
+  pattern_index : Int32
   loc : Loc
   captures : Map[String, Array[Loc]]
 } derive(Eq, Debug)

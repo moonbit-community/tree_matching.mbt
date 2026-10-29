@@ -26,4 +26,3 @@ type Symbol derive(Eq, Hash, @debug.Debug)
 // Type aliases
 
 // Traits
-

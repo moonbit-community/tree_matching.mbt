@@ -1,18 +1,18 @@
 ///|
 struct Span {
-  start : Int
-  end : Int
+  start : Int32
+  end : Int32
 } derive(Eq, Hash, Debug)
 
 ///|
 struct SexpParser {
   input : String
-  mut index : Int
+  mut index : Int32
 }
 
 ///|
-fn span(start : Int, end : Int) -> Span {
-  Span::{ start, end }
+fn span(start : Int32, end : Int32) -> Span {
+  Span::{ start, end, }
 }
 
 ///|
@@ -98,7 +98,7 @@ fn SexpParser::parse_list(self : SexpParser) -> @ac.LabelledTree[Span] {
 
 ///|
 fn parse_sexp(input : String) -> @ac.LabelledTree[Span] {
-  let parser = SexpParser::{ input, index: 0 }
+  let parser = SexpParser::{ input, index: 0, }
   let tree = parser.parse_tree()
   parser.skip_whitespace()
   if parser.index != input.length() {

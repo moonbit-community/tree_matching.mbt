@@ -2,7 +2,7 @@
 priv struct Entry[T, Loc] {
   node : LabelledTree[Loc]
   state : TrieNode[T]
-  mut visited : Int
+  mut visited : Int32
 }
 
 ///|
@@ -15,7 +15,7 @@ struct MbtAstGrepEnv[Loc] {
 
 ///|
 pub fn[Loc : Hash + Eq] MbtAstGrepEnv::new() -> MbtAstGrepEnv[Loc] {
-  MbtAstGrepEnv::{ locations: Map([]) }
+  MbtAstGrepEnv::{ locations: Map([]), }
 }
 
 ///|
@@ -33,7 +33,7 @@ pub fn[Loc : Eq + Hash] MbtAstGrepEnv::grep(
   // move on root label of subject tree
   let first = trie.root.follow(subject.label())
   let stack : EntryStack[Symbol, Loc] = Array::new()
-  stack.push(Entry::{ node: subject, state: first, visited: -1 })
+  stack.push(Entry::{ node: subject, state: first, visited: -1, })
   let metavar_registry = {}
   fn tabulate(state : TrieNode[Symbol]) -> Unit {
     let outs = state.outputs()
@@ -43,7 +43,7 @@ pub fn[Loc : Eq + Hash] MbtAstGrepEnv::grep(
       entry.node.hits += 1
       // If the current state has a metavar, register it in the current search table.
       if state.metavar is Some(name) &&
-        stack.last() is Some({ node, state: _, visited }) {
+        stack.last() is Some({ node, state: _, visited, }) {
         let metavar_env = metavar_registry.get_or_init(
           entry.node.loc.unwrap_or_else(() => {
             println("internal bug: ac matching got an empty location")
@@ -88,7 +88,7 @@ pub fn[Loc : Eq + Hash] MbtAstGrepEnv::grep(
   }
 
   tabulate(first)
-  while stack.last() is Some({ node, state, visited } as top) {
+  while stack.last() is Some({ node, state, visited, } as top) {
     if visited == node.arity() - 1 {
       ignore(stack.pop())
     } else {
@@ -97,7 +97,7 @@ pub fn[Loc : Eq + Hash] MbtAstGrepEnv::grep(
       tabulate(initial_state)
       let node = node.child(top.visited)
       let state = initial_state.follow(node.label())
-      stack.push(Entry::{ node, state, visited: -1 })
+      stack.push(Entry::{ node, state, visited: -1, })
       tabulate(state)
     }
   }

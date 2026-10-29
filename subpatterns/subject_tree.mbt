@@ -21,5 +21,5 @@ pub fn[Loc] SubjectTree::node(
   label : String,
   children : ArrayView[SubjectTree[Loc]],
 ) -> SubjectTree[Loc] {
-  { loc, label, children: children.to_owned() }
+  { loc, label, children: children.to_owned(), }
 }
