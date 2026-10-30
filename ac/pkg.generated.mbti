@@ -15,6 +15,7 @@ pub fn[Loc] build_pattern_from_labelled_tree(LabelledTree[Loc]) -> ArrayView[(@v
 type LabelledTree[Loc]
 pub fn[Loc] LabelledTree::metavar(String) -> Self[Loc]
 pub fn[Loc] LabelledTree::node(Loc, String, ArrayView[Self[Loc]]) -> Self[Loc]
+pub fn[Loc] LabelledTree::to_json(Self[Loc]) -> Json
 pub impl[Loc] ToJson for LabelledTree[Loc]
 
 type MbtAstGrepEnv[Loc]
@@ -22,6 +23,11 @@ pub fn[Loc : Eq + Hash] MbtAstGrepEnv::grep(Self[Loc], ArrayView[(@vector.Vector
 pub fn[Loc : Hash + Eq] MbtAstGrepEnv::new() -> Self[Loc]
 
 type Symbol derive(Eq, Hash, @debug.Debug)
+pub fn Symbol::equal(Self, Self) -> Bool
+pub fn Symbol::hash(Self) -> Int32
+pub fn Symbol::hash_combine(Self, Hasher) -> Unit
+pub fn Symbol::not_equal(Self, Self) -> Bool
+pub fn Symbol::to_repr(Self) -> @debug.Repr
 
 // Type aliases
 

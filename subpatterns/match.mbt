@@ -10,3 +10,9 @@ pub(all) struct Match[Loc] {
   loc : Loc
   captures : Map[String, Array[Loc]]
 } derive(Eq, Debug)
+
+///|
+pub extend Match with Eq::{equal, not_equal}
+
+///|
+pub extend Match with Debug::{to_repr}

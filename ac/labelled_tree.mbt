@@ -76,3 +76,6 @@ fn[Loc] LabelledTree::label(self : LabelledTree[Loc]) -> Symbol {
     MetaVar(_) => abort("impossible")
   }
 }
+
+///|
+pub extend LabelledTree with ToJson::{to_json}

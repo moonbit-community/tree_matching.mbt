@@ -14,7 +14,7 @@ type TreePattern = ArrayView[(RTLPath, String?)]
 pub fn[Loc] build_pattern_from_labelled_tree(
   t : LabelledTree[Loc],
 ) -> TreePattern {
-  let paths = Array::new()
+  let paths = Array()
   fn go(acc : RTLPath, t : LabelledTree[Loc]) -> Unit {
     match t.node {
       Node(label~, children=[]) =>
@@ -35,3 +35,12 @@ pub fn[Loc] build_pattern_from_labelled_tree(
   go(@immutvector.new(), t)
   return paths
 }
+
+///|
+pub extend Symbol with Eq::{equal, not_equal}
+
+///|
+pub extend Symbol with Hash::{hash, hash_combine}
+
+///|
+pub extend Symbol with Debug::{to_repr}

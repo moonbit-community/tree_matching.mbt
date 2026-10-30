@@ -105,7 +105,7 @@ struct Matcher {
 ///
 /// Empty pattern lists are valid and produce a matcher that returns no matches.
 pub fn Matcher::compile(patterns : ArrayView[Pattern]) -> Matcher {
-  let state = CompileState::{ key_to_id: Map::default(), subpatterns: [], }
+  let state = CompileState::{ key_to_id: Map([]), subpatterns: [], }
   let root_ids = []
   let capture_paths_by_pattern = []
   for pattern in patterns {
@@ -117,7 +117,7 @@ pub fn Matcher::compile(patterns : ArrayView[Pattern]) -> Matcher {
 
   let subpattern_count = state.subpatterns.length() + 1
   let word_count = bitset_word_count(subpattern_count)
-  let u_by_symbol = Map::default()
+  let u_by_symbol = Map([])
   let father_by_pos_child = []
   let complete_patterns_by_root_id = Array::makei(subpattern_count, _ => [])
 
@@ -130,7 +130,7 @@ pub fn Matcher::compile(patterns : ArrayView[Pattern]) -> Matcher {
     u_by_symbol.get_or_init(symbol, () => Bitset::new(word_count)).set(id)
     subpattern.children.eachi((pos, child_id) => {
       while father_by_pos_child.length() <= pos {
-        father_by_pos_child.push(Map::default())
+        father_by_pos_child.push(Map([]))
       }
       let by_child = father_by_pos_child[pos]
       by_child.get_or_init(child_id, () => Bitset::new(word_count)).set(id)
@@ -212,7 +212,7 @@ pub fn[Loc] Matcher::find_all(
   self : Matcher,
   subject : SubjectTree[Loc],
 ) -> Array[Match[Loc]] {
-  let father_cache = Map::default()
+  let father_cache = Map([])
   self.match_subject(subject, father_cache).matches
 }
 
@@ -328,7 +328,7 @@ fn[Loc] Matcher::collect_captures(
   subject : SubjectTree[Loc],
   pattern_index : Int32,
 ) -> Map[String, Array[Loc]] {
-  let captures = Map::default()
+  let captures = Map([])
   for capture_path in self.capture_paths_by_pattern[pattern_index] {
     captures
     .get_or_init(capture_path.name, () => [])
