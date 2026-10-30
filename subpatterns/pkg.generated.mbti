@@ -15,6 +15,9 @@ pub(all) struct Match[Loc] {
   loc : Loc
   captures : Map[String, Array[Loc]]
 } derive(Eq, @debug.Debug)
+pub fn[Loc : Eq] Match::equal(Self[Loc], Self[Loc]) -> Bool
+pub fn[Loc : Eq] Match::not_equal(Self[Loc], Self[Loc]) -> Bool
+pub fn[Loc : @debug.Debug] Match::to_repr(Self[Loc]) -> @debug.Repr
 
 type Matcher
 pub fn Matcher::compile(ArrayView[Pattern]) -> Self

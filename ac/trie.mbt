@@ -12,9 +12,9 @@ priv struct TrieNode[T] {
 ///|
 impl[T : ToJson + Show] ToJson for TrieNode[T] with fn to_json(self) {
   if self.goto.is_empty() {
-    Json::array(self.pattern.map(c => c.to_json()).to_array())
+    Json::array(self.pattern.map(c => ToJson::to_json(c)).to_array())
   } else {
-    self.goto.to_json()
+    Json(self.goto)
   }
 }
 

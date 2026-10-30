@@ -32,9 +32,9 @@ pub fn[Loc : Eq + Hash] MbtAstGrepEnv::grep(
   trie.compute()
   // move on root label of subject tree
   let first = trie.root.follow(subject.label())
-  let stack : EntryStack[Symbol, Loc] = Array::new()
+  let stack : EntryStack[Symbol, Loc] = Array()
   stack.push(Entry::{ node: subject, state: first, visited: -1, })
-  let metavar_registry = {}
+  let metavar_registry = Map([])
   fn tabulate(state : TrieNode[Symbol]) -> Unit {
     let outs = state.outputs()
     outs.each(out => {
